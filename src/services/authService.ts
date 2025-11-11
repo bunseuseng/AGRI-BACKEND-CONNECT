@@ -1,0 +1,48 @@
+import User, { IUser } from "../models/User";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
+
+export const authService = {
+    // Placeholder for authentication service methods
+};
+
+export const registerService = async (name: string, email: string, password: string, role: "admin" | "farmer" | "customer") => {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+        throw new Error("User with this email already exists");
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser: IUser = new User({
+        name,
+        email,
+        password: hashedPassword,
+        role,
+    });
+    await newUser.save();
+
+    if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET is not defined in environment variables");
+    const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    return { user: newUser, token };
+};
+
+export const loginService = async (email: string, password: string) => {
+    const user = await User.findOne({ email });
+    if (!user) {
+        throw new Error("Invalid email or password");
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+        throw new Error("Invalid email or password");
+    }
+
+    if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET is not defined in environment variables");
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    return { user, token };
+};
+
+// export const logoutService = async (userId: string) => {
+//     // In a stateless JWT authentication, logout can be handled on the client side by deleting the token.
+//     // Optionally, you can implement token blacklisting on the server side if needed.
+//     return { message: "User logged out successfully" };
+// };

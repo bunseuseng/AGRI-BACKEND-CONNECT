@@ -1,20 +1,25 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import mongoose from 'mongoose';
-import bodyParser from 'body-parser';
-import { dot } from 'node:test/reporters';
-
+import dotenv from "dotenv";
 
 dotenv.config();
-const app = express();
 
-mongoose
-  .connect(process.env.MONGO_URL || 'mongodb://localhost:27017/agri-connect')
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.error(" MongoDB Error:", err));
+import connectDB from "./config/db";
+import app from "./app";
+import { seedAdmin } from "./seed/seedAdmin";
+import { seedRoles } from "./seed/seedRoles";
 
-app.listen(5000, () => console.log("🚀 Server running on port 5000"));
-// Middleware
-app.use(bodyParser.json());
+connectDB();
 
-// Database connection
+const PORT = process.env.PORT || 5000;
+
+const startServer = async () => {
+  // Seed admin user first 
+  await seedAdmin();
+  await seedRoles();
+  app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
+}
+
+
+
+startServer();

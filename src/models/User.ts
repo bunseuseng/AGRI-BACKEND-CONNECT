@@ -7,6 +7,7 @@ email: string;
 password: string;
 address?: string;
 phone?: string;
+role: string;
 createdAt?: Date;
 updatedAt?: Date;
 }
@@ -33,6 +34,9 @@ phone: {
       sparse: true, 
       match: [/^\d{8,15}$/, "Phone number must be 8-15 digits"] 
     },
+role: {
+    type: String,
+},
 
 },
 { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } }

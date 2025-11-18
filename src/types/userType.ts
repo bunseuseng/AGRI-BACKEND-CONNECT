@@ -4,6 +4,7 @@ export interface UserType {
   email: string;
   address?: string;
   phone?: string;
+  role: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

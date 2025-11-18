@@ -4,6 +4,8 @@ import { logger } from "./middlewares/logger";
 import { errorHandler } from "./middlewares/errorHandler";
 import authRoutes from "./routes/authRoutes";
 import { setupSwagger } from "./config/swagger";
+import roleRoutes from "./routes/roleRoute";
+
 
 
 const app = express();
@@ -25,6 +27,9 @@ app.get("/", (req, res) => {
 });
 // Routes
 app.use("/api/auth", authRoutes);
+
+// Role routes
+app.use("/api/roles", roleRoutes);
 
 // Global error handler
 app.use(errorHandler);

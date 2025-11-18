@@ -1,12 +1,12 @@
-import { Request, Response, NextFunction } from "express";
+// import { Request, Response, NextFunction } from "express";
 
-export const checkRole = (role: string[]) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-        if (!req.user || !role.includes(req.user.role)) {
-            return res.status(403).json({
-                message: "Access indied"
-            });
-        }
-        next();
-    };
-};
+// export const checkRole = (role: string[]) => {
+//     return (req: Request, res: Response, next: NextFunction) => {
+//         if (!req.user || !role.includes(req.user.role)) {
+//             return res.status(403).json({
+//                 message: "Access indied"
+//             });
+//         }
+//         next();
+//     };
+// };

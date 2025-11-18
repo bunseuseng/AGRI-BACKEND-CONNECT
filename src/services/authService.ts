@@ -56,21 +56,6 @@ export const loginService = async (email: string, password: string) => {
     return { user, token };
 };
 
-// export const loginService = async (email: string, password: string) => {
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//         throw new Error("Invalid email or password");
-//     }
-//     const isPasswordValid = await bcrypt.compare(password, user.password);
-//     if (!isPasswordValid) {
-//         throw new Error("Invalid email or password");
-//     }
-
-//     if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET is not defined in environment variables");
-//     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
-//     return { user, token };
-// };
-
 // export const logoutService = async (userId: string) => {
 //     // In a stateless JWT authentication, logout can be handled on the client side by deleting the token.
 //     // Optionally, you can implement token blacklisting on the server side if needed.

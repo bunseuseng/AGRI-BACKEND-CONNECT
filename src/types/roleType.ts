@@ -1,6 +1,6 @@
-export interface RoleType {
-  id: string;       // MongoDB ObjectId as string
-  name: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+export interface IRole extends Document {
+name: string;
+description?: string;
+createdAt?: Date;
+updatedAt?: Date;
 }

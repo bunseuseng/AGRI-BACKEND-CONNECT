@@ -5,6 +5,8 @@ import { errorHandler } from "./middlewares/errorHandler";
 import authRoutes from "./routes/authRoutes";
 import { setupSwagger } from "./config/swagger";
 import roleRoutes from "./routes/roleRoute";
+import UserRoute from "./routes/userRoutes";
+import UserRoleRoute from "./routes/userRoleRoute";
 
 
 
@@ -28,8 +30,14 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/api/auth", authRoutes);
 
+// User routes
+app.use("/api/users", UserRoute);
+
 // Role routes
 app.use("/api/roles", roleRoutes);
+
+// User-Role routes
+app.use("/api/user-roles", UserRoleRoute);
 
 // Global error handler
 app.use(errorHandler);

@@ -1,21 +1,17 @@
 import { Document, Schema, model } from 'mongoose';
-
-
-export interface IUser extends Document {
-name: string;
-email: string;
-password: string;
-address?: string;
-phone?: string;
-role: string;
-createdAt?: Date;
-updatedAt?: Date;
-}
+import { IUser } from '../types/userType';
 
 
 const UserSchema = new Schema<IUser>(
 {
-name: { type: String, required: true },
+firstName: { 
+  type: String, 
+  required: true 
+},
+lastName: { 
+  type: String, 
+  required: true 
+},
 email: { 
       type: String, 
       required: [true, "Email is required"], 
@@ -34,9 +30,9 @@ phone: {
       sparse: true, 
       match: [/^\d{8,15}$/, "Phone number must be 8-15 digits"] 
     },
-role: {
-    type: String,
-},
+// role: {
+//     type: [String],
+// },
 
 },
 { timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } }

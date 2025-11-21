@@ -1,12 +1,5 @@
-import { Document, Schema, model, Types } from 'mongoose';
-
-
-export interface IUserRole extends Document {
-user_id: Types.ObjectId;
-role_id: Types.ObjectId;
-assignedAt?: Date;
-}
-
+import { Document, Schema, model } from 'mongoose';
+import { IUserRole } from '../types/userRoleType';
 
 const UserRoleSchema = new Schema<IUserRole>(
 {

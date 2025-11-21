@@ -6,6 +6,7 @@ import { Role } from "../models/role";
 interface jwtPayload {
     id: string;
     role: string;
+    description?: string;
 }
 
 declare global {
@@ -17,8 +18,9 @@ declare global {
 }
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-    const token  = req.headers.authorization?.split("")[1];
-    if (!token) return res.status(401).json({message: "No token provided"});
+    const token  = req.headers.authorization?.split(" ")[1];
+    if (!token) 
+        return res.status(401).json({message: "No token provided"});
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwtPayload;
@@ -31,18 +33,33 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     }
 };
 
+export const checkRole = (roles: string[]) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        if (!req.user) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
 
-// export const authorizeAdmin = async (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     const userId = (req as any).user.id; // from authenticateJWT
-//     // Get roles for this user
-//     const userRoles = await UserRoles.find({ user_id: userId }).populate("role_id");
-//     const isAdmin = userRoles.some(ur => (ur.role_id as any).name === "Admin");
-//     if (!isAdmin) {
-//       return res.status(403).json({ message: "Forbidden: Admins only" });
-//     }
-//     next();
-//   } catch (err) {
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
+        try {
+            const userId = req.user.id;
+
+            // Get roles for this user and populate role details
+            const userRoles = await UserRole.find({ user_id: userId }).populate("role_id");
+
+            // Extract role names
+            const roleNames = userRoles.map(ur => (ur.role_id as any).name);
+
+            // Check if user has at least one of the required roles
+            const hasRole = roles.some(role => roleNames.includes(role));
+
+            if (!hasRole) {
+                return res.status(403).json({ message: "Forbidden: Insufficient role" });
+            }
+
+            next();
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: "Server error" });
+        }
+    };
+};
+

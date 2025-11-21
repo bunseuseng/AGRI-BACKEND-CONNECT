@@ -1,63 +1,73 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { IUser, User } from "../models/User";
 import { Role } from "../models/role";
 import { UserRole } from "../models/userRole";
+import { User } from "../models/User";
+import { Request, Response } from "express";
 
+const JWT_SECRET = process.env.JWT_SECRET || "your_secret_here";
 
-export const registerService = async (
-    name: string, 
-    email: string, 
-    password: string, 
-    address?: string, 
-    phone?: string
-) => {
+// -------- REGISTER SERVICE --------
+export const registerService = async (req: Request, res: Response) => {
+  try {
+    const { firstName, lastName, email, password, address, phone } = req.body;
+
+    // 1️⃣ Check if email exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-        throw new Error("User with this email already exists");
+      return res.status(400).json({ message: "User with this email already exists" });
     }
 
-    //Hash password before saving to database
+    // 2️⃣ Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    //Create new user in database
+    // 3️⃣ Create user
     const newUser = await User.create({
-        name,
-        email,
-        password: hashedPassword,
-        address,
-        phone
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+      address,
+      phone
     });
 
-    // Assign "Customer" role to the newly registered user
-    const customerRole = await Role.findOne({name: "Customer"});
+    // 4️⃣ Assign Customer role
+    const customerRole = await Role.findOne({ name: "Customer" });
     if (customerRole) {
-        await UserRole.create({
-            user_id: newUser._id,
-            role_id: customerRole._id
-        });
+      await UserRole.create({
+        user_id: newUser._id,
+        role_id: customerRole._id
+      });
     }
 
-    return newUser;
+    return res.status(201).json({ message: "User registered successfully", user: newUser });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
-export const loginService = async (email: string, password: string) => {
-    const user = await User.findOne({ email }).exec() as IUser || null;
-    if (!user) throw new Error("Invalid credentials!");
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) throw new Error("Invalid credentials!")
+// -------- LOGIN SERVICE --------
+export const loginService = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
 
+    // 1️⃣ Find user
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+
+    // 2️⃣ Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+
+    // 3️⃣ Generate JWT
     const token = jwt.sign(
-        { id: user._id },
-        process.env.JWT_SECRET as string,
-        { expiresIn: "7d" }
+      { id: user._id },
+      JWT_SECRET,
+      { expiresIn: "7d" }
     );
 
-    return { user, token };
+    return res.status(200).json({ message: "Login successful", user, token });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
 };
-
-// export const logoutService = async (userId: string) => {
-//     // In a stateless JWT authentication, logout can be handled on the client side by deleting the token.
-//     // Optionally, you can implement token blacklisting on the server side if needed.
-//     return { message: "User logged out successfully" };
-// };

@@ -10,15 +10,41 @@ const options = {
       version: "1.0.0",
       description: "API documentation for the AgriConnect backend system",
     },
+
+    // ✅ Add your server
     servers: [
       {
         url: "http://localhost:5000",
         description: "Local server",
       },
     ],
+
+    // ✅ Add Bearer Token (IMPORTANT)
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+
+    // 🔒 This applies JWT auth to all endpoints automatically
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
   },
-  // The path where swagger will look for API definitions
-  apis: ["./src/routes/*.ts", "./src/models/*.ts"],
+
+  // ⭐ IMPORTANT: Swagger must scan your docs folder also
+  apis: [
+    "./src/routes/*.ts",
+    "./src/models/*.ts",
+    "./src/docs/*.ts",   // <-- add this
+    "./src/controllers/*.ts", // optional but useful
+  ],
 };
 
 const swaggerSpec = swaggerJsdoc(options);

@@ -1,16 +1,14 @@
 // routes/authRoutes.ts
 import { Router } from "express";
-import * as AuthController from "../controllers/authController";
+import { registerController, loginController } from "../controllers/authController";
 
 const router = Router();
-
 /**
  * @swagger
  * tags:
  *   name: Auth
  *   description: Authentication endpoints
  */
-
 /**
  * @swagger
  * /api/auth/register:
@@ -24,13 +22,19 @@ const router = Router();
  *           schema:
  *             type: object
  *             required:
- *               - name
+ *               - firstName
+ *               - lastName
  *               - email
  *               - password
+ *               - address
+ *               - phone
  *             properties:
- *               name:
+ *               firstName:
  *                 type: string
- *                 example: John Doe
+ *                 example: John
+ *               lastName:
+ *                 type: string
+ *                 example: Doe
  *               email:
  *                 type: string
  *                 format: email
@@ -38,6 +42,12 @@ const router = Router();
  *               password:
  *                 type: string
  *                 example: password123
+ *               address:
+ *                 type: string
+ *                 example: 123 Main St, City, Country
+ *               phone:
+ *                 type: string
+ *                 example: 1234567890
  *     responses:
  *       201:
  *         description: User registered successfully
@@ -46,7 +56,8 @@ const router = Router();
  *       500:
  *         description: Internal server error
  */
-router.post("/register", AuthController.register);
+
+router.post("/register", registerController);
 
 /**
  * @swagger
@@ -79,6 +90,6 @@ router.post("/register", AuthController.register);
  *       500:
  *         description: Internal server error
  */
-router.post("/login", AuthController.login);
+router.post("/login", loginController);
 
 export default router;

@@ -1,32 +1,31 @@
 import { Request, Response } from "express";
-import * as RoleService from "../services/roleService"; // <-- fixed import
+import * as userRoleService from "../services/userRoleService";
 
-// CREATE ROLE
 export const CreateRoleController = async (req: Request, res: Response) => {
-  const result = await RoleService.createRoleService(req, res);
+  const result = await userRoleService.assignUserRoleService(req, res);
   return result;
 };
 
-// GET ALL ROLES
+// GET ALL
 export const GetRolesController = async (req: Request, res: Response) => {
-  const result = await RoleService.getRolesService(req, res);
+  const result = await userRoleService.getUserRolesService(req, res);
   return result;
 };
 
-// GET ROLE BY ID
+// GET BY ID
 export const GetRoleByIdController = async (req: Request, res: Response) => {
-  const result = await RoleService.getRoleByIdService(req, res);
+  const result = await userRoleService.getUserRoleByIdService(req, res);
   return result;
 };
 
-// UPDATE ROLE
+// UPDATE
 export const UpdateRoleController = async (req: Request, res: Response) => {
-  const result = await RoleService.updateRoleService(req, res);
+  const result = await userRoleService.updateUserRoleService(req, res);
   return result;
 };
 
-// DELETE ROLE
+// DELETE
 export const DeleteRoleController = async (req: Request, res: Response) => {
-  const result = await RoleService.deleteRoleService(req, res);
+  const result = await userRoleService.deleteUserRoleService(req, res);
   return result;
 };

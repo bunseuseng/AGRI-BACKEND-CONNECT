@@ -1,10 +1,9 @@
 import { Router } from "express";
 import * as RoleController from "../controllers/roleController";
-import { authorizeAdmin } from "../middlewares/authorizeAdmin";
 import { authMiddleware } from "../middlewares/authMiddleware";
+import { authorizeAdmin } from "../middlewares/authorizeAdmin";
 
 const router = Router();
-
 
 /**
  * @swagger
@@ -31,16 +30,15 @@ const router = Router();
  *               name:
  *                 type: string
  *                 example: Admin
- *               description:
- *                 type: string
- *                 example: Administrator role
  *     responses:
  *       201:
  *         description: Role created successfully
  *       400:
- *         description: Bad request
+ *         description: Bad request / validation error
+ *       500:
+ *         description: Internal server error
  */
-router.post("/",authMiddleware, authorizeAdmin, RoleController.createRole);      // Create
+router.post("/", authMiddleware, authorizeAdmin, RoleController.CreateRoleController);
 
 /**
  * @swagger
@@ -51,83 +49,96 @@ router.post("/",authMiddleware, authorizeAdmin, RoleController.createRole);     
  *     responses:
  *       200:
  *         description: List of roles
+ *       500:
+ *         description: Internal server error
  */
-router.get("/", authMiddleware, RoleController.getAllRoles);      // Read all
+router.get("/", authMiddleware, authorizeAdmin, RoleController.GetRolesController);
 
 /**
  * @swagger
  * /api/roles/{id}:
  *   get:
- *     summary: Get a role by ID
+ *     summary: Get role by ID
  *     tags: [Roles]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Role ID
  *         schema:
  *           type: string
+ *         description: Role ID
  *     responses:
  *       200:
- *         description: Role found
+ *         description: Role details
+ *       400:
+ *         description: Invalid role ID
  *       404:
  *         description: Role not found
+ *       500:
+ *         description: Internal server error
  */
-router.get("/:id", authMiddleware, RoleController.getRoleById);   // Read by ID
+router.get("/:id", authMiddleware, authorizeAdmin, RoleController.GetRoleByIdController);
 
 /**
  * @swagger
  * /api/roles/{id}:
  *   put:
- *     summary: Update a role
+ *     summary: Update role by ID
  *     tags: [Roles]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Role ID
  *         schema:
  *           type: string
+ *         description: Role ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
  *             properties:
  *               name:
  *                 type: string
- *                 example: SuperAdmin
- *               description:
- *                 type: string
- *                 example: Super admin role
+ *                 example: Manager
  *     responses:
  *       200:
  *         description: Role updated successfully
  *       400:
- *         description: Bad request
+ *         description: Invalid role ID / validation error
+ *       404:
+ *         description: Role not found
+ *       500:
+ *         description: Internal server error
  */
-router.put("/:id",authMiddleware, authorizeAdmin, RoleController.updateRole);    // Update
+router.put("/:id", authMiddleware, authorizeAdmin, RoleController.UpdateRoleController);
 
 /**
  * @swagger
  * /api/roles/{id}:
  *   delete:
- *     summary: Delete a role
+ *     summary: Delete role by ID
  *     tags: [Roles]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Role ID
  *         schema:
  *           type: string
+ *         description: Role ID
  *     responses:
  *       200:
  *         description: Role deleted successfully
+ *       400:
+ *         description: Invalid role ID
  *       404:
  *         description: Role not found
+ *       500:
+ *         description: Internal server error
  */
-router.delete("/:id", authMiddleware, authorizeAdmin, RoleController.deleteRole); // Delete
+router.delete("/:id", authMiddleware, authorizeAdmin, RoleController.DeleteRoleController);
 
 export default router;

@@ -58,6 +58,27 @@ router.get("/", authMiddleware, authorizeAdmin, UserRoleController.GetRolesContr
 /**
  * @swagger
  * /api/user-roles/{id}:
+ *   get:
+ *     summary: Get a user role by ID
+ *     tags: [UserRoles]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user role ID
+ *     responses:
+ *       200:
+ *         description: User role data
+ *       404:
+ *         description: User role not found
+ */
+router.get("/:id", authMiddleware, authorizeAdmin, UserRoleController.GetRoleByIdController);
+
+/**
+ * @swagger
+ * /api/user-roles/{id}:
  *   put:
  *     summary: Update a user role by ID
  *     tags: [UserRoles]
@@ -91,27 +112,6 @@ router.get("/", authMiddleware, authorizeAdmin, UserRoleController.GetRolesContr
  *         description: Bad request
  */
 router.put("/:id", authMiddleware, authorizeAdmin, UserRoleController.UpdateRoleController);
-
-/**
- * @swagger
- * /api/user-roles/{id}:
- *   get:
- *     summary: Get a user role by ID
- *     tags: [UserRoles]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *         description: The user role ID
- *     responses:
- *       200:
- *         description: User role data
- *       404:
- *         description: User role not found
- */
-router.get("/:id", authMiddleware, authorizeAdmin, UserRoleController.GetRoleByIdController);
 
 /**
  * @swagger

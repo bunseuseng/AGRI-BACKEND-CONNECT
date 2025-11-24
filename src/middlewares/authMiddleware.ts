@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { UserRole } from "../models/userRole";
-import { Role } from "../models/role";
 
 interface jwtPayload {
     id: string;
@@ -23,6 +22,8 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         return res.status(401).json({message: "No token provided"});
 
     try {
+        // Why decoded as jwtPayload?
+        // Because we defined the structure of our JWT payload in the jwtPayload interface.
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as jwtPayload;
         req.user = decoded;
         next();
@@ -34,12 +35,14 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
 };
 
 export const checkRole = (roles: string[]) => {
+    // async used because of await inside
     return async (req: Request, res: Response, next: NextFunction) => {
         if (!req.user) {
             return res.status(401).json({ message: "Unauthorized" });
         }
 
         try {
+            // Extract user ID from request
             const userId = req.user.id;
 
             // Get roles for this user and populate role details
@@ -47,7 +50,6 @@ export const checkRole = (roles: string[]) => {
 
             // Extract role names
             const roleNames = userRoles.map(ur => (ur.role_id as any).name);
-
             // Check if user has at least one of the required roles
             const hasRole = roles.some(role => roleNames.includes(role));
 

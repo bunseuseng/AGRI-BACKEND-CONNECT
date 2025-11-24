@@ -33,7 +33,6 @@ export const createProductService = async (req: Request, res: Response) => {
         return res.status(201).json({
             message: "Product created successfully", product: newProduct
         })
-
     } 
     // Error handling if any
     catch (error: any) { 
@@ -72,6 +71,19 @@ export const getProductByIdService = async (req: Request, res: Response) => {
 // -------- UPDATE PRODUCT --------
 export const updateProductService = async (req: Request, res: Response) => {
     try {
+        const { id } = req.params;
+        const updates = req.body;
+
+        if (!id) return res.status(400).json({
+            message: "Product ID is required"
+        })
+
+        const updatedProduct = await Product.findByIdAndUpdate(id, updates, { new: true });
+        if (!updatedProduct) return res.status(404).json({ message: "Product not found" });
+
+        return res.status(200).json({
+            message: "Product updated successfully", product: updatedProduct
+        });
 
     } catch (error: any) {
         return res.status(500).json({ message: error.message });
@@ -81,7 +93,19 @@ export const updateProductService = async (req: Request, res: Response) => {
 // -------- DELETE PRODUCT --------
 export const deleteProductService = async (req: Request, res: Response) => {
     try {
+        const { id } = req.params;
 
+        if (!id) return res.status(400).json({
+            message: "Product ID is required"
+        });
+
+        const deletedProduct = await Product.findByIdAndDelete(id);
+        if (!deletedProduct) return res.status(404).json({
+            message: "Product not found"
+        });
+        return res.status(200).json({
+            message: "Product deleted successfully"
+        });
     } catch (error: any) {
         return res.status(500).json({ message: error.message });
     }

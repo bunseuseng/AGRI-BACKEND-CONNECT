@@ -5,7 +5,7 @@ export interface IProduct extends Document {
     id: string;
     name: string;
     description: string;
-    price: number;
+    price: Types.Decimal128;
     category_id: Types.ObjectId | string; // reference to Category id
     created_by: Types.ObjectId | string; // reference to User id who created the product
     updated_by?: Types.ObjectId | string; // reference to User id who last updated the product

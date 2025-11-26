@@ -7,6 +7,7 @@ import { setupSwagger } from "./config/swagger";
 import roleRoutes from "./routes/roleRoute";
 import UserRoute from "./routes/userRoutes";
 import UserRoleRoute from "./routes/userRoleRoute";
+import productRoutes from "./routes/productRoute";
 
 
 
@@ -39,6 +40,8 @@ app.use("/api/roles", roleRoutes);
 // User-Role routes
 app.use("/api/user-roles", UserRoleRoute);
 
+// Product routes
+app.use("/api/products", productRoutes);
 // Global error handler
 app.use(errorHandler);
 
